@@ -1,14 +1,14 @@
 var multicb = require('multicb')
 var s = require('../lib/static')
-var docView = require('../views/pages/doc')
+var newView = require('../views/pages/new')
 
 module.exports = function (req, res, next) {
 
   // Doc page
-  if (s.pathStarts(req, '/doc/')) {
+  if (req.url == '/new') {
     s.type(res, 'text/html')
     res.writeHead(200)
-    return res.end(docView().outerHTML)
+    return res.end(newView().outerHTML)
   }
 
   next()

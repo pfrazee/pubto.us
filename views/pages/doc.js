@@ -9,8 +9,7 @@ module.exports = function () {
       h('meta', { charset: 'utf8' })
     ),
     h('body',
-      h('h1', h('a', { href: '/' }, 'pub.doc')),
-      h('p', h('button#loginbtn', 'Login'), ' ', h('button#logoutbtn', 'Logout')),
+      com.heading(),
       h('#doc'),
       h('script', { src: '/js/document.js' })
     )

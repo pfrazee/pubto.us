@@ -4,14 +4,14 @@ var com = require('../com')
 module.exports = function () {
   return h('html',
     h('head',
-      h('title', 'pub.doc'),
+      h('title', 'pub.doc - new document'),
       h('link', { rel: 'stylesheet', href: '/css/index.css' }),
       h('meta', { charset: 'utf8' })
     ),
     h('body',
       com.heading(),
-      h('#docsdiv', h('em', 'Login to see your network\'s library')),
-      h('script', { src: '/js/index.js' })
+      com.docForm(),
+      h('script', { src: '/js/new.js' })
     )
   )
 }

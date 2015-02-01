@@ -1,23 +1,82 @@
 body {
   font-family: Helvetica, Arial, sans-serif;
+  margin: 1em;
 }
-.message {
-  margin-bottom: 1em;
+.heading h1 {
+  margin-bottom: 2px;
 }
-.message-summary {
-  display: inline-block;
-  margin: 6px 6px;
-  overflow: hidden;
-  background: #eee;
-  padding: 10px 22px;
-  border: 1px solid #aaa;
-  border-radius: 5px;
-}
-.message-summary a {
-  color: #808080;
+.heading h1 a {
+  color: #555;
   text-decoration: none;
 }
-.message-summary small {
-  color: #aaa;
-  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+.heading h1 a:hover {
+  background: #f5f5f5;
+}
+.heading h1 small {
+  font-size: 21px;
+  font-weight: normal;
+}
+.heading p {
+  margin: 0 0 1.5em;
+}
+button {
+  border-radius: 3px;
+  border: 1px solid #aaa;
+  background: #fff;
+  color: #555;
+  cursor: pointer;
+}
+button:not(:disabled):hover {
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15);
+}
+button:disabled {
+  cursor: initial;
+  background: #eee;
+}
+.doc-form .input-group {
+  margin: 1em;
+}
+.doc-form label {
+  display: block;
+  color: #555;
+  margin-bottom: 2px;
+}
+.doc-form input[type=text],
+.doc-form input[type=file] {
+  font-size: 19px;
+  padding: 10px 12px;
+}
+.doc-form textarea {
+  font-size: 16px;
+  padding: 10px 12px;
+  border: 1px solid gray;
+}
+.doc-form input[type=text],
+.doc-form textarea {
+  width: 100%;
+  color: #333;
+  border: 1px solid gray;
+  background: #fafafa;
+  box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15);
+}
+.doc-form input[type=text]:focus,
+.doc-form textarea:focus {
+  color: #000;
+  background: #fff;
+  box-shadow: none;
+}
+.doc-form button {
+  font-size: 18px;
+  padding: 10px 12px;
+  border-radius: 3px;
+  border: 1px solid #aaa;
+  background: #fff;
+  color: #555;
+  cursor: pointer;
+}
+.doc-form button:hover {
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15);
+}
+.doc-form #titleInput {
+  font-weight: bold;
 }

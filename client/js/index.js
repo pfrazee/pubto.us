@@ -45,7 +45,7 @@ sbot.on('ready', function() {
     docsDiv.insertBefore(com.docSummary(post), docsDiv.firstChild)
   }))
 })
-},{"../../views/com":61,"./decorators":1,"./lib/scuttlebot":4,"pull-stream":42}],4:[function(require,module,exports){
+},{"../../views/com":62,"./decorators":1,"./lib/scuttlebot":4,"pull-stream":42}],4:[function(require,module,exports){
 var muxrpc = require('muxrpc')
 var Serializer = require('pull-serializer')
 var chan = require('ssb-channel')
@@ -5613,6 +5613,26 @@ module.exports = {
 module.exports=require(56)
 },{"/Users/paulfrazee/doc.pub/node_modules/ssb-channel/node_modules/ssb-address/index.js":56}],59:[function(require,module,exports){
 var h = require('hyperscript')
+
+module.exports = function () {
+  return h('form.doc-form',
+    h('div.input-group',
+      h('label', { 'for': 'titleInput' }, 'Title'),
+      h('input#titleInput', { type: 'text', name: 'title' })
+    ),
+    h('div.input-group',
+      h('label', { 'for': 'documentFile' }, 'Document'),
+      h('input#documentFile', { type: 'file', name: 'document', multiple: false })
+    ),
+    h('div.input-group',
+      h('label', { 'for': 'descriptionTextarea' }, 'How would you describe this document? Why\'s it in your library?'),
+      h('textarea#descriptionTextarea', { type: 'text', name: 'description', rows: 12 })
+    )
+  )
+}
+
+},{"hyperscript":14}],60:[function(require,module,exports){
+var h = require('hyperscript')
 var nicedate = require('nicedate')
 var com = require('./')
 
@@ -5631,7 +5651,7 @@ module.exports = function (msg) {
     console.error('Failed to render doc summary', e, msg)
   }
 }
-},{"./":61,"hyperscript":14,"nicedate":31}],60:[function(require,module,exports){
+},{"./":62,"hyperscript":14,"nicedate":31}],61:[function(require,module,exports){
 var h = require('hyperscript')
 var nicedate = require('nicedate')
 
@@ -5647,7 +5667,17 @@ module.exports = function (msg) {
     console.error('Failed to render message summary', e, msg)
   }
 }
-},{"hyperscript":14,"nicedate":31}],61:[function(require,module,exports){
+},{"hyperscript":14,"nicedate":31}],62:[function(require,module,exports){
+var h = require('hyperscript')
+
 exports.doc = require('./doc')
 exports.docSummary = require('./doc-summary')
-},{"./doc":60,"./doc-summary":59}]},{},[3]);
+exports.docForm = require('./doc-form')
+
+exports.heading = function () {
+  return [
+    h('h1', h('a', { href: '/' }, 'pub.doc'), ' ', h('small', h('a', { href: '/new'}, 'new'))),
+    h('p', h('button#loginbtn', 'Login'), ' ', h('button#logoutbtn', 'Logout')),
+  ]
+}
+},{"./doc":61,"./doc-form":59,"./doc-summary":60,"hyperscript":14}]},{},[3]);
