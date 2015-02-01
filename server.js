@@ -9,8 +9,7 @@ http.createServer(stack(
     next()
   },
   require('./routes/index'),
-  require('./routes/message'),
-  require('./routes/store'),
+  require('./routes/document'),
   require('./routes/static')
 )).listen(PORT)
 console.log('listening on', PORT)

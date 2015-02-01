@@ -1,19 +1,18 @@
 var h = require('hyperscript')
 var com = require('../com')
 
-module.exports = function (msg) {
+module.exports = function () {
   return h('html',
     h('head',
-      h('title', 'paste.space - '+msg.key),
+      h('title', 'pub.doc'),
       h('link', { rel: 'stylesheet', href: '/css/index.css' }),
       h('meta', { charset: 'utf8' })
     ),
     h('body',
-      h('h1', h('a', { href: '/' }, 'paste.space')),
+      h('h1', h('a', { href: '/' }, 'pub.doc')),
       h('p', h('button#loginbtn', 'Login'), ' ', h('button#logoutbtn', 'Logout')),
-      h('#message', com.message(msg)),
-      h('button#publishbtn', 'Publish'),
-      h('script', { src: '/js/message.js' })
+      h('#doc'),
+      h('script', { src: '/js/document.js' })
     )
   )
 }

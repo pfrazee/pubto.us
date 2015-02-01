@@ -3,9 +3,10 @@ var nicedate = require('nicedate')
 
 module.exports = function (msg) {
   try {
-    return h('.message', 
+    var c = msg.value.content
+    return h('.doc', 
       h('div', h('small', nicedate(new Date(msg.value.timestamp), true))),
-      h('div', msg.value.content.text)
+      h('div', c.title || c.name || 'untitled')
     )
   }
   catch (e) {

@@ -3,7 +3,7 @@ var sbot = require('./lib/scuttlebot')
 var dec = require('./decorators')
 var com = require('../../views/com')
 
-var postsDiv = document.getElementById('postsdiv')
+var docsDiv = document.getElementById('docsdiv')
 dec.login(document.getElementById('loginbtn'), document.getElementById('logoutbtn'))
 
 sbot.on('ready', function() {
@@ -12,8 +12,8 @@ sbot.on('ready', function() {
     console.log('whoami', err, id)
   })
 
-  postsDiv.innerHTML = ''
-  pull(sbot.ssb.createLogStream({ limit: 30, reverse: true, live: true }), pull.drain(function (post) {
-    postsDiv.insertBefore(com.messageSummary(post), postsDiv.firstChild)
+  docsDiv.innerHTML = ''
+  pull(sbot.ssb.messagesByType({ type: 'doc', limit: 30, reverse: true, live: true }), pull.drain(function (post) {
+    docsDiv.insertBefore(com.docSummary(post), docsDiv.firstChild)
   }))
 })

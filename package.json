@@ -1,16 +1,16 @@
 {
-  "name": "paste.space",
+  "name": "doc.pub",
   "description": "a data-publishing utility",
   "version": "0.0.0",
-  "homepage": "https://github.com/pfraze/paste.space",
+  "homepage": "https://github.com/pfraze/doc.pub",
   "repository": {
     "type": "git",
-    "url": "git://github.com/pfraze/paste.space.git"
+    "url": "git://github.com/pfraze/doc.pub.git"
   },
   "scripts": {
     "build-js-index": "browserify -o client/js/index.js client/src/index.js",
-    "build-js-message": "browserify -o client/js/message.js client/src/message.js",
-    "build-js": "mkdir -p client/js; npm run build-js-index; npm run build-js-message",
+    "build-js-document": "browserify -o client/js/document.js client/src/document.js",
+    "build-js": "mkdir -p client/js; npm run build-js-index; npm run build-js-document",
     "build-css": "mkdir -p client/css; lessc client/less/index.less client/css/index.css",
     "build": "npm run build-js; npm run build-css",
     "start": "node server.js"
@@ -25,7 +25,6 @@
     "pull-serializer": "~0.3.1",
     "pull-ws-server": "~1.1.1",
     "redis": "~0.12.1",
-
     "ssb-channel": "~1.0.1",
     "ssb-domain-auth": "~1.0.0",
     "ssb-keys": "~0.3.0",
