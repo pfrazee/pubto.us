@@ -10,7 +10,8 @@
   "scripts": {
     "build-js-index": "browserify -o client/js/index.js client/src/index.js",
     "build-js-document": "browserify -o client/js/document.js client/src/document.js",
-    "build-js": "mkdir -p client/js; npm run build-js-index; npm run build-js-document",
+    "build-js-new": "browserify -o client/js/new.js client/src/new.js",
+    "build-js": "mkdir -p client/js; npm run build-js-index; npm run build-js-document; npm run build-js-new",
     "build-css": "mkdir -p client/css; lessc client/less/index.less client/css/index.css",
     "build": "npm run build-js; npm run build-css",
     "start": "node server.js"
@@ -18,9 +19,11 @@
   "dependencies": {
     "hyperscript": "~1.4.3",
     "json-body": "~0.0.0",
+    "multiblob": "~1.4.1",
     "multicb": "~1.1.0",
     "muxrpc": "~3.3.0",
     "nicedate": "~0.0.0",
+    "pull-pushable": "~1.1.3",
     "pull-stream": "~2.24.1",
     "pull-serializer": "~0.3.1",
     "pull-ws-server": "~1.1.1",

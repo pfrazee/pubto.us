@@ -30,7 +30,7 @@ ssbchan.on('error', function (err) {
 sbot.login = function () {
   auth.openAuthPopup('localhost', {
     title: 'paste.space',
-    perms: ['whoami', 'add', 'messagesByType', 'createLogStream']
+    perms: ['whoami', 'add', 'messagesByType', 'createLogStream', 'blobs.add', 'blobs.get']
   }, function(err, granted) {
     if (granted)
       ssbchan.reconnect({ wait: 0 })

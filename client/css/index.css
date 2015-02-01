@@ -19,6 +19,11 @@ body {
 .heading p {
   margin: 0 0 1.5em;
 }
+label::after {
+  content: attr(data-after);
+  color: #a55;
+  padding-left: 4px;
+}
 button {
   border-radius: 3px;
   border: 1px solid #aaa;
@@ -68,14 +73,6 @@ button:disabled {
 .doc-form button {
   font-size: 18px;
   padding: 10px 12px;
-  border-radius: 3px;
-  border: 1px solid #aaa;
-  background: #fff;
-  color: #555;
-  cursor: pointer;
-}
-.doc-form button:hover {
-  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.15);
 }
 .doc-form #titleInput {
   font-weight: bold;
