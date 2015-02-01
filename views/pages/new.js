@@ -4,7 +4,7 @@ var com = require('../com')
 module.exports = function () {
   return h('html',
     h('head',
-      h('title', 'pub.doc - new document'),
+      h('title', 'pubto.us - new document'),
       h('link', { rel: 'stylesheet', href: '/css/index.css' }),
       h('meta', { charset: 'utf8' })
     ),

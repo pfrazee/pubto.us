@@ -1,11 +1,11 @@
 {
-  "name": "doc.pub",
+  "name": "pubto.us",
   "description": "a data-publishing utility",
   "version": "0.0.0",
-  "homepage": "https://github.com/pfraze/doc.pub",
+  "homepage": "https://github.com/pfraze/pubto.us",
   "repository": {
     "type": "git",
-    "url": "git://github.com/pfraze/doc.pub.git"
+    "url": "git://github.com/pfraze/pubto.us.git"
   },
   "scripts": {
     "build-js-index": "browserify -o client/js/index.js client/src/index.js",

@@ -5626,6 +5626,9 @@ module.exports = function () {
     h('div.input-group',
       h('label', { 'for': 'descriptionTextarea' }, 'How would you describe this document? Why\'s it in your library?'),
       h('textarea#descriptionTextarea', { type: 'text', name: 'description', rows: 12 })
+    ),
+    h('div.input-group',
+      h('button', { type: 'submit' }, 'Save')
     )
   )
 }
@@ -5674,9 +5677,9 @@ exports.docSummary = require('./doc-summary')
 exports.docForm = require('./doc-form')
 
 exports.heading = function () {
-  return [
-    h('h1', h('a', { href: '/' }, 'pub.doc'), ' ', h('small', h('a', { href: '/new'}, 'new'))),
-    h('p', h('button#loginbtn', 'Login'), ' ', h('button#logoutbtn', 'Logout')),
-  ]
+  return h('.heading',
+    h('h1', h('a', { href: '/' }, 'pubto.us'), ' ', h('small', h('a', { href: '/new'}, 'new'))),
+    h('p', h('button#loginbtn', 'Login'), ' ', h('button#logoutbtn', 'Logout'))
+  )
 }
 },{"./doc":61,"./doc-form":59,"./doc-summary":60,"hyperscript":14}]},{},[3]);
