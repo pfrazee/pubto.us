@@ -1,6 +1,6 @@
 var http = require('http')
 var stack = require('stack')
-var PORT = 8050
+var PORT = process.env.port || 8050
 
 http.createServer(stack(
   function (req, res, next) {
