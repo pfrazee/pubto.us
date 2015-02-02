@@ -5,17 +5,19 @@ var pull = require('pull-stream')
 var pushable = require('pull-pushable')
 var sbot = require('../lib/scuttlebot')
 
+var SIZE_5MB = 5 * 1024 * 1024
+
 module.exports = function (formEl) {
   formEl.onsubmit = onsubmit
 }
 
-function setError (el, reason) {
-  el.previousSibling.dataset.after = reason
+function setError (el, desc) {
+  el.previousSibling.dataset.after = desc
 }
 
-function required (el, v) {
-  if (!v) {
-    setError(el, 'required')
+function validate (desc, el, passes) {
+  if (!passes) {
+    setError(el, desc)
     return true
   } else {
     setError(el, '')
@@ -36,6 +38,7 @@ function onsubmit (e) {
   e.preventDefault()
   var formEl = this
   var submitBtn = formEl.querySelector('button')
+  var file = formEl.document.files[0]
 
   var msg = {
     type: 'library-add',
@@ -49,8 +52,9 @@ function onsubmit (e) {
 
   // validate
   var hasErrors = 
-    required(formEl.title, (msg.title||'').trim()) || 
-    required(formEl.document, formEl.document.files.length)
+    validate('required', formEl.title, !!(msg.title||'').trim()) || 
+    validate('required', formEl.document, !!formEl.document.files.length) ||
+    validate('must be less than 5mb', formEl.document, file.size <= SIZE_5MB)
   if (hasErrors)
     return
 
@@ -58,7 +62,6 @@ function onsubmit (e) {
   setBtn(submitBtn, false, 'Saving...')
 
   // read file
-  var file = formEl.document.files[0]
   var ps = pushable()
   var reader = new FileReader()
   reader.onload = function () {
