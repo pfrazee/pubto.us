@@ -9,9 +9,10 @@
   },
   "scripts": {
     "build-js-index": "browserify -o client/js/index.js client/src/index.js",
+    "build-js-library": "browserify -o client/js/library.js client/src/library.js",
     "build-js-document": "browserify -o client/js/document.js client/src/document.js",
     "build-js-new": "browserify -o client/js/new.js client/src/new.js",
-    "build-js": "mkdir -p client/js; npm run build-js-index; npm run build-js-document; npm run build-js-new",
+    "build-js": "mkdir -p client/js; npm run build-js-index; npm run build-js-library; npm run build-js-document; npm run build-js-new",
     "build-css": "mkdir -p client/css; lessc client/less/index.less client/css/index.css",
     "build": "npm run build-js; npm run build-css",
     "start": "node server.js"

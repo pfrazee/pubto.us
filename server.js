@@ -9,6 +9,7 @@ http.createServer(stack(
     next()
   },
   require('./routes/index'),
+  require('./routes/library'),
   require('./routes/new'),
   require('./routes/document'),
   require('./routes/static')

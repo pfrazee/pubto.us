@@ -180,7 +180,7 @@ sbot.on('ready', function () {
 
   docsDiv.innerHTML = ''
   pull(sbot.ssb.messagesByType({ type: 'library-add', limit: 30, live: true }), pull.drain(function (doc) {
-    docsDiv.insertBefore(com.docSummary(doc), docsDiv.firstChild)
+    docsDiv.insertBefore(com.docSummary(doc, sbot), docsDiv.firstChild)
   }))
 })
 
@@ -188,6 +188,8 @@ sbot.on('ready', function () {
 function noAccess () {
   docsDiv.innerHTML = '<em>Login to see your network\'s library</em>'
 }
+
+window.sbot = sbot
 },{"../../views/com":84,"./decorators":2,"./lib/scuttlebot":5,"pull-stream":63}],5:[function(require,module,exports){
 var muxrpc = require('muxrpc')
 var Serializer = require('pull-serializer')
@@ -199,19 +201,28 @@ var sbot = module.exports = new events.EventEmitter()
 var sbotFound = false
 sbot.available = localStorage.sbotAvailable === '1'
 sbot.hasAccess = localStorage.sbotHasAccess === '1'
+sbot.names = null
 
 var ssb = sbot.ssb = muxrpc(require('./ssb-manifest'), false, serialize)()
 var ssbchan = chan.connect(ssb, 'localhost')
 ssbchan.on('connect', function() {
   console.log('Connected')
+  
   sbotFound = true
   sbot.available = localStorage.sbotAvailable = 1
+
   auth.getToken('localhost', function(err, token) {
     if (err) return ssbchan.close(), console.log('Token fetch failed', err)
+
     ssb.auth(token, function(err) {
       if (err) return ssbchan.close(), console.log('Auth failed')
       sbot.hasAccess = localStorage.sbotHasAccess = 1
-      sbot.emit('ready')
+
+      ssb.phoenix.getNamesById(function (err, names) {
+        if (names)
+          sbot.names = names
+        sbot.emit('ready')
+      })
     })
   })
 })
@@ -221,16 +232,18 @@ ssbchan.on('reconnecting', function () {
 })
 ssbchan.on('error', function (err) {
   console.log('Connection failed')
+
   sbot.hasAccess = localStorage.sbotHasAccess = 0
   if (!sbotFound) // not detected, assume not availabe
     sbot.available = localStorage.sbotAvailable = 0
+
   sbot.emit('error', err)
 })
 
 sbot.login = function () {
   auth.openAuthPopup('localhost', {
     title: 'paste.space',
-    perms: ['whoami', 'add', 'messagesByType', 'createLogStream', 'blobs.add', 'blobs.get']
+    perms: ['whoami', 'add', 'messagesByType', 'createLogStream', 'blobs.add', 'blobs.get', 'phoenix.getNamesById']
   }, function(err, granted) {
     if (granted)
       ssbchan.reconnect({ wait: 0 })
@@ -8841,8 +8854,7 @@ var h = require('hyperscript')
 var nicedate = require('nicedate')
 var com = require('./')
 
-
-module.exports = function (msg) {
+module.exports = function (msg, sbot) {
   try {
     var c = msg.value.content
     var title = c.title || c.name || 'untitled'
@@ -8850,7 +8862,11 @@ module.exports = function (msg) {
     return h('.doc-summary', 
       h('h2', h('a', { href: '/doc/'+msg.key }, title)),
       (c.desc ? h('.desc', c.desc) : ''),
-      h('div', h('small', nicedate(new Date(msg.value.timestamp), true)))      
+      h('div', h('small',
+        nicedate(new Date(msg.value.timestamp), true),
+        ' by ',
+        h('a', { href: '/library/'+msg.value.author }, com.name(msg.value.author, sbot))
+      ))
     )
   }
   catch (e) {
@@ -8862,12 +8878,12 @@ var h = require('hyperscript')
 var summary = require('./doc-summary')
 var ext = require('./ext')
 
-module.exports = function (msg, blob) {
+module.exports = function (msg, blob, sbot) {
   try {
     var c = msg.value.content
     return h('.doc', 
       h('.ext', { 'data-name': c.name || c.ext }, ext(msg, blob)),
-      summary(msg)
+      summary(msg, sbot)
     )
   }
   catch (e) {
@@ -8940,5 +8956,17 @@ exports.heading = function () {
       )
     )
   )
+}
+
+exports.name = function (id, sbot) {
+  return (sbot && sbot.names && sbot.names[id]) ? sbot.names[id] : shortStr(id, 8)
+}
+
+function shortStr (s, n) {
+  s = s || ''
+  n = n || 15
+  if (s.length > n)
+    s = s.slice(0, n) + '...'
+  return s
 }
 },{"./doc":82,"./doc-form":80,"./doc-summary":81,"hyperscript":20}]},{},[4]);

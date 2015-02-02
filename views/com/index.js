@@ -18,3 +18,15 @@ exports.heading = function () {
     )
   )
 }
+
+exports.name = function (id, sbot) {
+  return (sbot && sbot.names && sbot.names[id]) ? sbot.names[id] : shortStr(id, 8)
+}
+
+function shortStr (s, n) {
+  s = s || ''
+  n = n || 15
+  if (s.length > n)
+    s = s.slice(0, n) + '...'
+  return s
+}

@@ -19,6 +19,11 @@ body {
 .heading p {
   margin: 0 0 1.5em;
 }
+h3.subheading {
+  margin: 0 1em;
+  color: #555;
+  text-transform: uppercase;
+}
 .hidden {
   display: none;
 }

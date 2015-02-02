@@ -16,7 +16,7 @@ sbot.on('ready', function() {
     var msg = { key: key, value: value }
     function concat (chunk) { blob += atob(chunk) }
     pull(sbot.ssb.blobs.get(msg.value.content.ext), pull.drain(concat, function (err) {
-      docDiv.appendChild(com.doc(msg, blob))
+      docDiv.appendChild(com.doc(msg, blob, sbot))
     }))
   })
 })

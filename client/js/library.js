@@ -110,7 +110,7 @@ function onsubmit (e) {
   }
 }
 }).call(this,require("buffer").Buffer)
-},{"../lib/scuttlebot":5,"buffer":8,"hyperscript":20,"multiblob/util":31,"pull-pushable":46,"pull-stream":63}],2:[function(require,module,exports){
+},{"../lib/scuttlebot":4,"buffer":8,"hyperscript":20,"multiblob/util":31,"pull-pushable":46,"pull-stream":63}],2:[function(require,module,exports){
 exports.login = require('./login')
 exports.docForm = require('./doc-form')
 },{"./doc-form":1,"./login":3}],3:[function(require,module,exports){
@@ -159,30 +159,7 @@ module.exports = function (el) {
     }
   }
 }
-},{"../lib/scuttlebot":5}],4:[function(require,module,exports){
-var pull = require('pull-stream')
-var sbot = require('./lib/scuttlebot')
-var dec = require('./decorators')
-var com = require('../../views/com')
-
-var docDiv = document.getElementById('doc')
-var key = window.location.pathname.slice(5)
-
-// setup ui
-dec.login(document.getElementById('sessiondiv'))
-
-// sbot interactions
-sbot.on('ready', function() {
-  sbot.ssb.get(key, function (err, value) {
-    var blob = ''
-    var msg = { key: key, value: value }
-    function concat (chunk) { blob += atob(chunk) }
-    pull(sbot.ssb.blobs.get(msg.value.content.ext), pull.drain(concat, function (err) {
-      docDiv.appendChild(com.doc(msg, blob, sbot))
-    }))
-  })
-})
-},{"../../views/com":84,"./decorators":2,"./lib/scuttlebot":5,"pull-stream":63}],5:[function(require,module,exports){
+},{"../lib/scuttlebot":4}],4:[function(require,module,exports){
 var muxrpc = require('muxrpc')
 var Serializer = require('pull-serializer')
 var chan = require('ssb-channel')
@@ -249,7 +226,7 @@ sbot.logout = function () {
 function serialize (stream) {
   return Serializer(stream, JSON, {split: '\n\n'})
 }
-},{"./ssb-manifest":6,"events":12,"muxrpc":32,"pull-serializer":53,"ssb-channel":76,"ssb-domain-auth":78}],6:[function(require,module,exports){
+},{"./ssb-manifest":5,"events":12,"muxrpc":32,"pull-serializer":53,"ssb-channel":76,"ssb-domain-auth":78}],5:[function(require,module,exports){
 module.exports = {
   // protocol
   auth: 'async',
@@ -328,7 +305,38 @@ module.exports = {
     getIdsByName: 'async'
   }
 }
-},{}],7:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
+var pull = require('pull-stream')
+var sbot = require('./lib/scuttlebot')
+var dec = require('./decorators')
+var com = require('../../views/com')
+
+var userId = window.location.pathname.slice('/library/'.length)
+var subheading = document.querySelector('.subheading')
+var docsDiv = document.getElementById('docsdiv')
+dec.login(document.getElementById('sessiondiv'))
+
+if (!sbot.hasAccess)
+  noAccess()
+sbot.on('error', noAccess)
+
+sbot.on('ready', function () {
+  var name = com.name(userId, sbot)
+  subheading.textContent = name+'\'s library'
+  document.title = 'pubto.us - ' + name+'\'s library'
+
+  docsDiv.innerHTML = ''
+  pull(sbot.ssb.messagesByType({ type: 'library-add', limit: 30, live: true }), pull.drain(function (doc) {
+    if (doc.value.author === userId)
+      docsDiv.insertBefore(com.docSummary(doc, sbot), docsDiv.firstChild)
+  }))
+})
+
+function noAccess () {
+  docsDiv.innerHTML = '<em>Login to see your network\'s library</em>'
+}
+
+},{"../../views/com":84,"./decorators":2,"./lib/scuttlebot":4,"pull-stream":63}],7:[function(require,module,exports){
 
 },{}],8:[function(require,module,exports){
 /*!
@@ -8961,4 +8969,4 @@ function shortStr (s, n) {
     s = s.slice(0, n) + '...'
   return s
 }
-},{"./doc":82,"./doc-form":80,"./doc-summary":81,"hyperscript":20}]},{},[4]);
+},{"./doc":82,"./doc-form":80,"./doc-summary":81,"hyperscript":20}]},{},[6]);
