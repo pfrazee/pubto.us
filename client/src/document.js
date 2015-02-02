@@ -7,7 +7,7 @@ var docDiv = document.getElementById('doc')
 var key = window.location.pathname.slice(5)
 
 // setup ui
-dec.login(document.getElementById('loginbtn'), document.getElementById('logoutbtn'))
+dec.login(document.getElementById('sessiondiv'))
 
 // sbot interactions
 sbot.on('ready', function() {

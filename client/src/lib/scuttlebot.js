@@ -19,7 +19,7 @@ ssbchan.on('connect', function() {
     if (err) return ssbchan.close(), console.log('Token fetch failed', err)
     ssb.auth(token, function(err) {
       if (err) return ssbchan.close(), console.log('Auth failed')
-        sbot.hasAccess = localStorage.sbotHasAccess = 1
+      sbot.hasAccess = localStorage.sbotHasAccess = 1
       sbot.emit('ready')
     })
   })

@@ -116,8 +116,11 @@ exports.docForm = require('./doc-form')
 },{"./doc-form":1,"./login":3}],3:[function(require,module,exports){
 var sbot = require('../lib/scuttlebot')
 
-module.exports = function (loginBtn, logoutBtn) {
-  var ready = sbot.hasAccess
+module.exports = function (el) {
+  var loginBtn  = el.querySelector('.login')
+  var logoutBtn = el.querySelector('.logout')
+  var infoEl    = el.querySelector('.info')
+  var ready     = sbot.hasAccess
   render()
 
   sbot.on('ready', function() {
@@ -144,12 +147,15 @@ module.exports = function (loginBtn, logoutBtn) {
     if (ready) {
       loginBtn.setAttribute('disabled', true)
       logoutBtn.removeAttribute('disabled')
+      infoEl.classList.add('hidden')      
     } else if (sbot.available) {
       loginBtn.removeAttribute('disabled')
       logoutBtn.setAttribute('disabled', true)
+      infoEl.classList.add('hidden')      
     } else {
       loginBtn.setAttribute('disabled', true)      
       logoutBtn.setAttribute('disabled', true)
+      infoEl.classList.remove('hidden')
     }
   }
 }
@@ -175,7 +181,7 @@ ssbchan.on('connect', function() {
     if (err) return ssbchan.close(), console.log('Token fetch failed', err)
     ssb.auth(token, function(err) {
       if (err) return ssbchan.close(), console.log('Auth failed')
-        sbot.hasAccess = localStorage.sbotHasAccess = 1
+      sbot.hasAccess = localStorage.sbotHasAccess = 1
       sbot.emit('ready')
     })
   })
@@ -292,7 +298,7 @@ module.exports = {
 var dec = require('./decorators')
 
 // setup ui
-dec.login(document.getElementById('loginbtn'), document.getElementById('logoutbtn'))
+dec.login(document.getElementById('sessiondiv'))
 dec.docForm(document.querySelector('form.doc-form'))
 },{"./decorators":2}],7:[function(require,module,exports){
 

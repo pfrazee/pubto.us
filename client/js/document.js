@@ -116,8 +116,11 @@ exports.docForm = require('./doc-form')
 },{"./doc-form":1,"./login":3}],3:[function(require,module,exports){
 var sbot = require('../lib/scuttlebot')
 
-module.exports = function (loginBtn, logoutBtn) {
-  var ready = sbot.hasAccess
+module.exports = function (el) {
+  var loginBtn  = el.querySelector('.login')
+  var logoutBtn = el.querySelector('.logout')
+  var infoEl    = el.querySelector('.info')
+  var ready     = sbot.hasAccess
   render()
 
   sbot.on('ready', function() {
@@ -144,12 +147,15 @@ module.exports = function (loginBtn, logoutBtn) {
     if (ready) {
       loginBtn.setAttribute('disabled', true)
       logoutBtn.removeAttribute('disabled')
+      infoEl.classList.add('hidden')      
     } else if (sbot.available) {
       loginBtn.removeAttribute('disabled')
       logoutBtn.setAttribute('disabled', true)
+      infoEl.classList.add('hidden')      
     } else {
       loginBtn.setAttribute('disabled', true)      
       logoutBtn.setAttribute('disabled', true)
+      infoEl.classList.remove('hidden')
     }
   }
 }
@@ -163,7 +169,7 @@ var docDiv = document.getElementById('doc')
 var key = window.location.pathname.slice(5)
 
 // setup ui
-dec.login(document.getElementById('loginbtn'), document.getElementById('logoutbtn'))
+dec.login(document.getElementById('sessiondiv'))
 
 // sbot interactions
 sbot.on('ready', function() {
@@ -198,7 +204,7 @@ ssbchan.on('connect', function() {
     if (err) return ssbchan.close(), console.log('Token fetch failed', err)
     ssb.auth(token, function(err) {
       if (err) return ssbchan.close(), console.log('Auth failed')
-        sbot.hasAccess = localStorage.sbotHasAccess = 1
+      sbot.hasAccess = localStorage.sbotHasAccess = 1
       sbot.emit('ready')
     })
   })
@@ -8918,7 +8924,15 @@ exports.docForm = require('./doc-form')
 exports.heading = function () {
   return h('.heading',
     h('h1', h('a', { href: '/' }, 'pubto.us'), ' ', h('small', h('a', { href: '/new'}, 'add document'))),
-    h('p', h('button#loginbtn', { disabled: true }, 'Login'), ' ', h('button#logoutbtn', { disabled: true }, 'Logout'))
+    h('p#sessiondiv',
+      h('button.login', { disabled: true }, 'Login'), ' ',
+      h('button.logout', { disabled: true }, 'Logout'), ' ',
+      h('span.info.hidden',
+        'You must have ',
+        h('a', { href: 'https://github.com/ssbc/scuttlebot', target: '_blank' }, 'secure scuttlebutt'),
+        ' installed and active to log in.'
+      )
+    )
   )
 }
 },{"./doc":82,"./doc-form":80,"./doc-summary":81,"hyperscript":20}]},{},[4]);

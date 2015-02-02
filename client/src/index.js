@@ -4,7 +4,7 @@ var dec = require('./decorators')
 var com = require('../../views/com')
 
 var docsDiv = document.getElementById('docsdiv')
-dec.login(document.getElementById('loginbtn'), document.getElementById('logoutbtn'))
+dec.login(document.getElementById('sessiondiv'))
 
 if (!sbot.hasAccess)
   noAccess()

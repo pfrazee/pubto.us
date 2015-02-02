@@ -19,6 +19,20 @@ body {
 .heading p {
   margin: 0 0 1.5em;
 }
+.hidden {
+  display: none;
+}
+#sessiondiv .info {
+  position: relative;
+  top: 1px;
+  color: #59580f;
+  background: yellow;
+  padding: 4px 5px 2px;
+  border: 1px solid orange;
+}
+#sessiondiv .info a {
+  color: blue;
+}
 label::after {
   content: attr(data-after);
   color: #a55;
