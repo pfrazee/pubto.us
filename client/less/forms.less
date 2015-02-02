@@ -1,7 +1,32 @@
-label::after {
-  content: attr(data-after);
-  color: #a55;
-  padding-left: 4px;
+
+.input-group {
+  margin: 1em;
+}
+
+label {
+  display: block;
+  color: #555;
+  margin-bottom: 2px;
+
+  &::after {
+    content: attr(data-after);
+    color: #a55;
+    padding-left: 4px;
+  }
+}
+
+input[type=text], textarea {
+  width: 100%;
+  color: #333;
+  border: 1px solid gray;
+  background: #fafafa;
+  box-shadow: inset 2px 2px 2px rgba(0,0,0,0.15);
+
+  &:focus {
+    color: #000;
+    background: #fff;
+    box-shadow: none;
+  }
 }
 
 button {

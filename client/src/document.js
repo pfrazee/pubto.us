@@ -12,11 +12,20 @@ dec.login(document.getElementById('sessiondiv'))
 // sbot interactions
 sbot.on('ready', function() {
   sbot.ssb.get(key, function (err, value) {
-    var blob = ''
     var msg = { key: key, value: value }
+
+    var blob = ''
     function concat (chunk) { blob += atob(chunk) }
     pull(sbot.ssb.blobs.get(msg.value.content.ext), pull.drain(concat, function (err) {
-      docDiv.appendChild(com.doc(msg, blob, sbot))
+
+      var docEl = com.doc(msg, blob, sbot)
+      docDiv.appendChild(docEl)
+
+      var commentsDiv = docDiv.querySelector('.comments')
+      dec.commentForm(document.querySelector('.comment-form'), commentsDiv, msg.key)
+      pull(sbot.ssb.messagesLinkedToMessage({ id: msg.key, rel: 'replies-to', keys: true }), pull.drain(function (comment) {
+        commentsDiv.appendChild(com.comment(comment, sbot))
+      }))
     }))
   })
 })

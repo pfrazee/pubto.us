@@ -1,8 +1,10 @@
 var h = require('hyperscript')
 
-exports.doc = require('./doc')
-exports.docSummary = require('./doc-summary')
-exports.docForm = require('./doc-form')
+exports.doc         = require('./doc')
+exports.docSummary  = require('./doc-summary')
+exports.docForm     = require('./doc-form')
+exports.comment     = require('./comment')
+exports.commentForm = require('./comment-form')
 
 exports.heading = function () {
   return h('.heading',

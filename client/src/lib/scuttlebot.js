@@ -50,7 +50,7 @@ ssbchan.on('error', function (err) {
 sbot.login = function () {
   auth.openAuthPopup('localhost', {
     title: 'paste.space',
-    perms: ['whoami', 'add', 'messagesByType', 'createLogStream', 'blobs.add', 'blobs.get', 'phoenix.getNamesById']
+    perms: ['whoami', 'add', 'messagesByType', 'messagesLinkedToMessage', 'blobs.add', 'blobs.get', 'phoenix.getNamesById']
   }, function(err, granted) {
     if (granted)
       ssbchan.reconnect({ wait: 0 })

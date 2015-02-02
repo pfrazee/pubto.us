@@ -38,10 +38,32 @@ h3.subheading {
 #sessiondiv .info a {
   color: blue;
 }
+.input-group {
+  margin: 1em;
+}
+label {
+  display: block;
+  color: #555;
+  margin-bottom: 2px;
+}
 label::after {
   content: attr(data-after);
   color: #a55;
   padding-left: 4px;
+}
+input[type=text],
+textarea {
+  width: 100%;
+  color: #333;
+  border: 1px solid gray;
+  background: #fafafa;
+  box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15);
+}
+input[type=text]:focus,
+textarea:focus {
+  color: #000;
+  background: #fff;
+  box-shadow: none;
 }
 button {
   border-radius: 3px;
@@ -56,6 +78,9 @@ button:not(:disabled):hover {
 button:disabled {
   cursor: initial;
   background: #eee;
+}
+.doc .doc-summary {
+  float: left;
 }
 .doc .ext {
   position: relative;
@@ -101,6 +126,9 @@ button:disabled {
   padding: 1em;
   box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15);
 }
+.doc-summary h2 {
+  margin-top: 0.5em;
+}
 .doc-summary h2 a {
   color: #555;
   text-decoration: none;
@@ -117,14 +145,6 @@ button:disabled {
 .doc-summary small {
   color: #555;
 }
-.doc-form .input-group {
-  margin: 1em;
-}
-.doc-form label {
-  display: block;
-  color: #555;
-  margin-bottom: 2px;
-}
 .doc-form input[type=text],
 .doc-form input[type=file] {
   font-size: 19px;
@@ -135,24 +155,40 @@ button:disabled {
   padding: 10px 12px;
   border: 1px solid gray;
 }
-.doc-form input[type=text],
-.doc-form textarea {
-  width: 100%;
-  color: #333;
-  border: 1px solid gray;
-  background: #fafafa;
-  box-shadow: inset 2px 2px 2px rgba(0, 0, 0, 0.15);
-}
-.doc-form input[type=text]:focus,
-.doc-form textarea:focus {
-  color: #000;
-  background: #fff;
-  box-shadow: none;
-}
 .doc-form button {
   font-size: 18px;
   padding: 10px 12px;
 }
 .doc-form #titleInput {
   font-weight: bold;
+}
+.comments {
+  margin-left: 395px;
+  margin-top: 2em;
+}
+.comments:empty {
+  display: none;
+}
+.comments .comment {
+  margin: 1em;
+  border: 1px solid gray;
+  padding: 1em;
+  box-shadow: 0px 2px 2px rgba(0, 0, 0, 0.15);
+  white-space: pre-wrap;
+}
+.comments .comment small {
+  color: gray;
+}
+.comment-form {
+  display: block;
+  margin-left: 395px;
+  margin-top: 2em;
+}
+.comment-form textarea {
+  font-size: 16px;
+  padding: 10px 12px;
+}
+.comment-form button {
+  font-size: 15px;
+  padding: 6px 12px;
 }
