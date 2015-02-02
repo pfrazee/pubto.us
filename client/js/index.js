@@ -7,17 +7,19 @@ var pull = require('pull-stream')
 var pushable = require('pull-pushable')
 var sbot = require('../lib/scuttlebot')
 
+var SIZE_5MB = 5 * 1024 * 1024
+
 module.exports = function (formEl) {
   formEl.onsubmit = onsubmit
 }
 
-function setError (el, reason) {
-  el.previousSibling.dataset.after = reason
+function setError (el, desc) {
+  el.previousSibling.dataset.after = desc
 }
 
-function required (el, v) {
-  if (!v) {
-    setError(el, 'required')
+function validate (desc, el, passes) {
+  if (!passes) {
+    setError(el, desc)
     return true
   } else {
     setError(el, '')
@@ -38,6 +40,7 @@ function onsubmit (e) {
   e.preventDefault()
   var formEl = this
   var submitBtn = formEl.querySelector('button')
+  var file = formEl.document.files[0]
 
   var msg = {
     type: 'library-add',
@@ -51,8 +54,9 @@ function onsubmit (e) {
 
   // validate
   var hasErrors = 
-    required(formEl.title, (msg.title||'').trim()) || 
-    required(formEl.document, formEl.document.files.length)
+    validate('required', formEl.title, !!(msg.title||'').trim()) || 
+    validate('required', formEl.document, !!formEl.document.files.length) ||
+    validate('must be less than 5mb', formEl.document, file.size <= SIZE_5MB)
   if (hasErrors)
     return
 
@@ -60,7 +64,6 @@ function onsubmit (e) {
   setBtn(submitBtn, false, 'Saving...')
 
   // read file
-  var file = formEl.document.files[0]
   var ps = pushable()
   var reader = new FileReader()
   reader.onload = function () {
@@ -114,13 +117,16 @@ exports.docForm = require('./doc-form')
 var sbot = require('../lib/scuttlebot')
 
 module.exports = function (loginBtn, logoutBtn) {
+  var ready = sbot.hasAccess
+  render()
+
   sbot.on('ready', function() {
-    loginBtn.setAttribute('disabled', true)
-    logoutBtn.removeAttribute('disabled')
+    ready = true
+    render()
   })
   sbot.on('error', function() {
-    loginBtn.removeAttribute('disabled')
-    logoutBtn.setAttribute('disabled', true)
+    ready = false
+    render()
   })
 
   loginBtn.onclick = function(e){
@@ -130,8 +136,21 @@ module.exports = function (loginBtn, logoutBtn) {
   logoutBtn.onclick = function(e){
     e.preventDefault()
     sbot.logout()
-    loginBtn.removeAttribute('disabled')
-    logoutBtn.setAttribute('disabled', true)
+    ready = false
+    render()
+  }
+
+  function render () {
+    if (ready) {
+      loginBtn.setAttribute('disabled', true)
+      logoutBtn.removeAttribute('disabled')
+    } else if (sbot.available) {
+      loginBtn.removeAttribute('disabled')
+      logoutBtn.setAttribute('disabled', true)
+    } else {
+      loginBtn.setAttribute('disabled', true)      
+      logoutBtn.setAttribute('disabled', true)
+    }
   }
 }
 },{"../lib/scuttlebot":5}],4:[function(require,module,exports){
@@ -143,7 +162,11 @@ var com = require('../../views/com')
 var docsDiv = document.getElementById('docsdiv')
 dec.login(document.getElementById('loginbtn'), document.getElementById('logoutbtn'))
 
-sbot.on('ready', function() {
+if (!sbot.hasAccess)
+  noAccess()
+sbot.on('error', noAccess)
+
+sbot.on('ready', function () {
   // :TODO: this should include a challenge for the server to sign, proving ownership of the keypair
   sbot.ssb.whoami(function(err, id) {
     console.log('whoami', err, id)
@@ -154,7 +177,12 @@ sbot.on('ready', function() {
     docsDiv.insertBefore(com.docSummary(doc), docsDiv.firstChild)
   }))
 })
-},{"../../views/com":83,"./decorators":2,"./lib/scuttlebot":5,"pull-stream":63}],5:[function(require,module,exports){
+
+
+function noAccess () {
+  docsDiv.innerHTML = '<em>Login to see your network\'s library</em>'
+}
+},{"../../views/com":84,"./decorators":2,"./lib/scuttlebot":5,"pull-stream":63}],5:[function(require,module,exports){
 var muxrpc = require('muxrpc')
 var Serializer = require('pull-serializer')
 var chan = require('ssb-channel')
@@ -162,15 +190,21 @@ var auth = require('ssb-domain-auth')
 var events = require('events')
 
 var sbot = module.exports = new events.EventEmitter()
+var sbotFound = false
+sbot.available = localStorage.sbotAvailable === '1'
+sbot.hasAccess = localStorage.sbotHasAccess === '1'
 
 var ssb = sbot.ssb = muxrpc(require('./ssb-manifest'), false, serialize)()
 var ssbchan = chan.connect(ssb, 'localhost')
 ssbchan.on('connect', function() {
   console.log('Connected')
+  sbotFound = true
+  sbot.available = localStorage.sbotAvailable = 1
   auth.getToken('localhost', function(err, token) {
     if (err) return ssbchan.close(), console.log('Token fetch failed', err)
     ssb.auth(token, function(err) {
       if (err) return ssbchan.close(), console.log('Auth failed')
+        sbot.hasAccess = localStorage.sbotHasAccess = 1
       sbot.emit('ready')
     })
   })
@@ -181,6 +215,9 @@ ssbchan.on('reconnecting', function () {
 })
 ssbchan.on('error', function (err) {
   console.log('Connection failed')
+  sbot.hasAccess = localStorage.sbotHasAccess = 0
+  if (!sbotFound) // not detected, assume not availabe
+    sbot.available = localStorage.sbotAvailable = 0
   sbot.emit('error', err)
 })
 
@@ -8814,23 +8851,70 @@ module.exports = function (msg) {
     console.error('Failed to render doc summary', e, msg)
   }
 }
-},{"./":83,"hyperscript":20,"nicedate":45}],82:[function(require,module,exports){
+},{"./":84,"hyperscript":20,"nicedate":45}],82:[function(require,module,exports){
 var h = require('hyperscript')
-var nicedate = require('nicedate')
+var summary = require('./doc-summary')
+var ext = require('./ext')
 
-module.exports = function (msg) {
+module.exports = function (msg, blob) {
   try {
     var c = msg.value.content
     return h('.doc', 
-      h('div', h('small', nicedate(new Date(msg.value.timestamp), true))),
-      h('div', c.title || c.name || 'untitled')
+      h('.ext', { 'data-name': c.name || c.ext }, ext(msg, blob)),
+      summary(msg)
     )
   }
   catch (e) {
     console.error('Failed to render message summary', e, msg)
   }
 }
-},{"hyperscript":20,"nicedate":45}],83:[function(require,module,exports){
+},{"./doc-summary":81,"./ext":83,"hyperscript":20}],83:[function(require,module,exports){
+var h = require('hyperscript')
+
+var imageTypes = {
+  png: 'image/png',
+  jpg: 'image/jpeg',
+  jpeg: 'image/jpeg',
+  gif: 'image/gif',
+  svg: 'image/svg+xml'  
+}
+var markdownTypes = {
+  md: 'text/x-markdown',
+  txt: 'text/plain'
+}
+var objectTypes = {
+  pdf: 'application/pdf'
+}
+
+module.exports = function (msg, blob) {
+  var ext = getExt(msg.value.content.name)
+  if (ext in imageTypes)    return imageExt(msg, blob)
+  if (ext in markdownTypes) return markdownExt(msg, blob)
+  if (ext in objectTypes)   return objectExt(msg, blob)    
+  return h('div.ext-unknown', blob)
+}
+
+function getExt (name) {
+  return (name||'').split('.').slice(-1)[0]
+}
+
+function imageExt (msg, blob) {
+  var name = msg.value.content.name
+  return h('img.ext-img', { alt: name, title: name, src: 'data:'+imageTypes[getExt(name)]+';base64,'+btoa(blob) })
+}
+
+function objectExt (msg, blob) {
+  var type = objectTypes[getExt(msg.value.content.name)]
+  return h('object.ext-obj', { data: 'data:'+type+';charset=utf-8;base64,'+btoa(blob), type: type })
+}
+
+function markdownExt (msg, blob) {
+  var ext = getExt(msg.value.content.name)
+  return (ext == 'md') ?
+    h('.ext-txt', blob) : // h('.ext-markdown', { innerHTML: markdown.block(blob, msg.value.content.names) }) :
+    h('.ext-txt', blob)
+}
+},{"hyperscript":20}],84:[function(require,module,exports){
 var h = require('hyperscript')
 
 exports.doc = require('./doc')
@@ -8840,7 +8924,7 @@ exports.docForm = require('./doc-form')
 exports.heading = function () {
   return h('.heading',
     h('h1', h('a', { href: '/' }, 'pubto.us'), ' ', h('small', h('a', { href: '/new'}, 'add document'))),
-    h('p', h('button#loginbtn', 'Login'), ' ', h('button#logoutbtn', 'Logout'))
+    h('p', h('button#loginbtn', { disabled: true }, 'Login'), ' ', h('button#logoutbtn', { disabled: true }, 'Logout'))
   )
 }
 },{"./doc":82,"./doc-form":80,"./doc-summary":81,"hyperscript":20}]},{},[4]);

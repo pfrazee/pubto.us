@@ -92,6 +92,9 @@ button:disabled {
   font-family: Georgia, serif;
   margin-bottom: 4px;
 }
+.doc-summary small {
+  color: #555;
+}
 .doc-form .input-group {
   margin: 1em;
 }

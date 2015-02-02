@@ -10,7 +10,7 @@ module.exports = function () {
     ),
     h('body',
       com.heading(),
-      h('#docsdiv', h('em', 'Login to see your network\'s library')),
+      h('#docsdiv'),
       h('script', { src: '/js/index.js' })
     )
   )

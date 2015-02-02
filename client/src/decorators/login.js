@@ -1,13 +1,16 @@
 var sbot = require('../lib/scuttlebot')
 
 module.exports = function (loginBtn, logoutBtn) {
+  var ready = sbot.hasAccess
+  render()
+
   sbot.on('ready', function() {
-    loginBtn.setAttribute('disabled', true)
-    logoutBtn.removeAttribute('disabled')
+    ready = true
+    render()
   })
   sbot.on('error', function() {
-    loginBtn.removeAttribute('disabled')
-    logoutBtn.setAttribute('disabled', true)
+    ready = false
+    render()
   })
 
   loginBtn.onclick = function(e){
@@ -17,7 +20,20 @@ module.exports = function (loginBtn, logoutBtn) {
   logoutBtn.onclick = function(e){
     e.preventDefault()
     sbot.logout()
-    loginBtn.removeAttribute('disabled')
-    logoutBtn.setAttribute('disabled', true)
+    ready = false
+    render()
+  }
+
+  function render () {
+    if (ready) {
+      loginBtn.setAttribute('disabled', true)
+      logoutBtn.removeAttribute('disabled')
+    } else if (sbot.available) {
+      loginBtn.removeAttribute('disabled')
+      logoutBtn.setAttribute('disabled', true)
+    } else {
+      loginBtn.setAttribute('disabled', true)      
+      logoutBtn.setAttribute('disabled', true)
+    }
   }
 }

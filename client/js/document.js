@@ -7,17 +7,19 @@ var pull = require('pull-stream')
 var pushable = require('pull-pushable')
 var sbot = require('../lib/scuttlebot')
 
+var SIZE_5MB = 5 * 1024 * 1024
+
 module.exports = function (formEl) {
   formEl.onsubmit = onsubmit
 }
 
-function setError (el, reason) {
-  el.previousSibling.dataset.after = reason
+function setError (el, desc) {
+  el.previousSibling.dataset.after = desc
 }
 
-function required (el, v) {
-  if (!v) {
-    setError(el, 'required')
+function validate (desc, el, passes) {
+  if (!passes) {
+    setError(el, desc)
     return true
   } else {
     setError(el, '')
@@ -38,6 +40,7 @@ function onsubmit (e) {
   e.preventDefault()
   var formEl = this
   var submitBtn = formEl.querySelector('button')
+  var file = formEl.document.files[0]
 
   var msg = {
     type: 'library-add',
@@ -51,8 +54,9 @@ function onsubmit (e) {
 
   // validate
   var hasErrors = 
-    required(formEl.title, (msg.title||'').trim()) || 
-    required(formEl.document, formEl.document.files.length)
+    validate('required', formEl.title, !!(msg.title||'').trim()) || 
+    validate('required', formEl.document, !!formEl.document.files.length) ||
+    validate('must be less than 5mb', formEl.document, file.size <= SIZE_5MB)
   if (hasErrors)
     return
 
@@ -60,7 +64,6 @@ function onsubmit (e) {
   setBtn(submitBtn, false, 'Saving...')
 
   // read file
-  var file = formEl.document.files[0]
   var ps = pushable()
   var reader = new FileReader()
   reader.onload = function () {
@@ -114,13 +117,16 @@ exports.docForm = require('./doc-form')
 var sbot = require('../lib/scuttlebot')
 
 module.exports = function (loginBtn, logoutBtn) {
+  var ready = sbot.hasAccess
+  render()
+
   sbot.on('ready', function() {
-    loginBtn.setAttribute('disabled', true)
-    logoutBtn.removeAttribute('disabled')
+    ready = true
+    render()
   })
   sbot.on('error', function() {
-    loginBtn.removeAttribute('disabled')
-    logoutBtn.setAttribute('disabled', true)
+    ready = false
+    render()
   })
 
   loginBtn.onclick = function(e){
@@ -130,8 +136,21 @@ module.exports = function (loginBtn, logoutBtn) {
   logoutBtn.onclick = function(e){
     e.preventDefault()
     sbot.logout()
-    loginBtn.removeAttribute('disabled')
-    logoutBtn.setAttribute('disabled', true)
+    ready = false
+    render()
+  }
+
+  function render () {
+    if (ready) {
+      loginBtn.setAttribute('disabled', true)
+      logoutBtn.removeAttribute('disabled')
+    } else if (sbot.available) {
+      loginBtn.removeAttribute('disabled')
+      logoutBtn.setAttribute('disabled', true)
+    } else {
+      loginBtn.setAttribute('disabled', true)      
+      logoutBtn.setAttribute('disabled', true)
+    }
   }
 }
 },{"../lib/scuttlebot":5}],4:[function(require,module,exports){
@@ -165,15 +184,21 @@ var auth = require('ssb-domain-auth')
 var events = require('events')
 
 var sbot = module.exports = new events.EventEmitter()
+var sbotFound = false
+sbot.available = localStorage.sbotAvailable === '1'
+sbot.hasAccess = localStorage.sbotHasAccess === '1'
 
 var ssb = sbot.ssb = muxrpc(require('./ssb-manifest'), false, serialize)()
 var ssbchan = chan.connect(ssb, 'localhost')
 ssbchan.on('connect', function() {
   console.log('Connected')
+  sbotFound = true
+  sbot.available = localStorage.sbotAvailable = 1
   auth.getToken('localhost', function(err, token) {
     if (err) return ssbchan.close(), console.log('Token fetch failed', err)
     ssb.auth(token, function(err) {
       if (err) return ssbchan.close(), console.log('Auth failed')
+        sbot.hasAccess = localStorage.sbotHasAccess = 1
       sbot.emit('ready')
     })
   })
@@ -184,6 +209,9 @@ ssbchan.on('reconnecting', function () {
 })
 ssbchan.on('error', function (err) {
   console.log('Connection failed')
+  sbot.hasAccess = localStorage.sbotHasAccess = 0
+  if (!sbotFound) // not detected, assume not availabe
+    sbot.available = localStorage.sbotAvailable = 0
   sbot.emit('error', err)
 })
 
@@ -8890,7 +8918,7 @@ exports.docForm = require('./doc-form')
 exports.heading = function () {
   return h('.heading',
     h('h1', h('a', { href: '/' }, 'pubto.us'), ' ', h('small', h('a', { href: '/new'}, 'add document'))),
-    h('p', h('button#loginbtn', 'Login'), ' ', h('button#logoutbtn', 'Logout'))
+    h('p', h('button#loginbtn', { disabled: true }, 'Login'), ' ', h('button#logoutbtn', { disabled: true }, 'Logout'))
   )
 }
 },{"./doc":82,"./doc-form":80,"./doc-summary":81,"hyperscript":20}]},{},[4]);
