@@ -5,7 +5,7 @@ var PORT = 8050
 http.createServer(stack(
   function (req, res, next) {
     // CSPs
-    res.setHeader('Content-Security-Policy', 'default-src \'self\'; connect-src \'self\' ws://localhost:2000 http://localhost:2000')
+    res.setHeader('Content-Security-Policy', 'default-src \'self\' data:; connect-src \'self\' ws://localhost:2000 http://localhost:2000')
     next()
   },
   require('./routes/index'),

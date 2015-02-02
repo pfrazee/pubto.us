@@ -1,5 +1,7 @@
+@import "mixins/common.less";
 
 @font-family-sans-serif:  Helvetica, Arial, sans-serif; //Verdana, Geneva, sans-serif;
+@font-family-serif:       Georgia, serif;
 @font-family-monospace:   Menlo, Monaco, Consolas, "Courier New", monospace;
 
 body {
@@ -11,11 +13,7 @@ body {
   h1 {
     margin-bottom: 2px;
     a {
-      color: #555;
-      text-decoration: none;
-      &:hover {
-        background: #f5f5f5;
-      }
+      .ui-link()
     }
     small {
       font-size: 21px;
@@ -27,4 +25,6 @@ body {
   }
 }
 @import "forms.less";
+@import "com/doc.less";
+@import "com/doc-summary.less";
 @import "com/doc-form.less";

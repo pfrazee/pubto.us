@@ -38,6 +38,60 @@ button:disabled {
   cursor: initial;
   background: #eee;
 }
+.doc .ext {
+  position: relative;
+  margin: 3em 1em 1em;
+}
+.doc .ext::before {
+  content: attr(data-name);
+  position: absolute;
+  top: -26px;
+  padding: 4px 5px;
+  color: #333;
+  background: #ddd;
+  border: 1px solid gray;
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  font-size: 13px;
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+}
+.doc .ext .ext-txt,
+.doc .ext .ext-unknown {
+  font-family: Menlo, Monaco, Consolas, "Courier New", monospace;
+  white-space: pre-wrap;
+  background: #f5f5f5;
+  padding: 1em;
+  border: 1px solid #808080;
+  border-radius: 5px;
+  border-top-left-radius: 0;
+}
+.doc .ext .ext-obj {
+  width: 100%;
+  min-height: 600px;
+  border: 1px solid #999;
+}
+.doc .ext .ext-html {
+  min-height: 600px;
+}
+.doc-summary {
+  margin: 1em;
+}
+.doc-summary h2 {
+  margin-bottom: 0;
+}
+.doc-summary h2 a {
+  color: #555;
+  text-decoration: none;
+}
+.doc-summary h2 a:hover {
+  background: #f5f5f5;
+}
+.doc-summary .desc {
+  color: gray;
+  font-weight: normal;
+  font-family: Georgia, serif;
+  margin-bottom: 4px;
+}
 .doc-form .input-group {
   margin: 1em;
 }

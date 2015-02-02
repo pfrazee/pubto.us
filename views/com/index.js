@@ -6,7 +6,7 @@ exports.docForm = require('./doc-form')
 
 exports.heading = function () {
   return h('.heading',
-    h('h1', h('a', { href: '/' }, 'pubto.us'), ' ', h('small', h('a', { href: '/new'}, 'new'))),
+    h('h1', h('a', { href: '/' }, 'pubto.us'), ' ', h('small', h('a', { href: '/new'}, 'add document'))),
     h('p', h('button#loginbtn', 'Login'), ' ', h('button#logoutbtn', 'Logout'))
   )
 }

@@ -1,12 +1,13 @@
 var h = require('hyperscript')
-var nicedate = require('nicedate')
+var summary = require('./doc-summary')
+var ext = require('./ext')
 
-module.exports = function (msg) {
+module.exports = function (msg, blob) {
   try {
     var c = msg.value.content
     return h('.doc', 
-      h('div', h('small', nicedate(new Date(msg.value.timestamp), true))),
-      h('div', c.title || c.name || 'untitled')
+      h('.ext', { 'data-name': c.name || c.ext }, ext(msg, blob)),
+      summary(msg)
     )
   }
   catch (e) {

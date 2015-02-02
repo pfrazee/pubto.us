@@ -12,7 +12,11 @@ dec.login(document.getElementById('loginbtn'), document.getElementById('logoutbt
 // sbot interactions
 sbot.on('ready', function() {
   sbot.ssb.get(key, function (err, value) {
+    var blob = ''
     var msg = { key: key, value: value }
-    docDiv.appendChild(com.doc(msg))
+    function concat (chunk) { blob += atob(chunk) }
+    pull(sbot.ssb.blobs.get(msg.value.content.ext), pull.drain(concat, function (err) {
+      docDiv.appendChild(com.doc(msg, blob))
+    }))
   })
 })

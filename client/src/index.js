@@ -13,7 +13,7 @@ sbot.on('ready', function() {
   })
 
   docsDiv.innerHTML = ''
-  pull(sbot.ssb.messagesByType({ type: 'doc', limit: 30, reverse: true, live: true }), pull.drain(function (post) {
-    docsDiv.insertBefore(com.docSummary(post), docsDiv.firstChild)
+  pull(sbot.ssb.messagesByType({ type: 'library-add', limit: 30, live: true }), pull.drain(function (doc) {
+    docsDiv.insertBefore(com.docSummary(doc), docsDiv.firstChild)
   }))
 })
