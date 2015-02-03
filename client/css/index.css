@@ -17,7 +17,8 @@ body {
   font-weight: normal;
 }
 .heading p {
-  margin: 0 0 1.5em;
+  color: #555;
+  margin: 0 0 2px;
 }
 h3.subheading {
   margin: 0 1em;
@@ -26,6 +27,9 @@ h3.subheading {
 }
 .hidden {
   display: none;
+}
+#sessiondiv {
+  margin-bottom: 1.5em;
 }
 #sessiondiv .info {
   position: relative;

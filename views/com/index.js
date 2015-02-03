@@ -9,6 +9,7 @@ exports.commentForm = require('./comment-form')
 exports.heading = function () {
   return h('.heading',
     h('h1', h('a', { href: '/' }, 'pubto.us'), ' ', h('small', h('a', { href: '/new'}, 'add document'))),
+    h('p.tagline', 'create and share a library of articles and e-books'),
     h('p#sessiondiv',
       h('button.login', { disabled: true }, 'Login'), ' ',
       h('button.logout', { disabled: true }, 'Logout'), ' ',
