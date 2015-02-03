@@ -12,6 +12,8 @@ module.exports = function () {
     h('body',
       com.heading(),
       h('#doc'),
+      h('.comments'),
+      com.commentForm(),
       h('script', { src: '/js/document.js' })
     )
   )

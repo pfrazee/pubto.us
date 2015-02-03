@@ -136,6 +136,9 @@ button:disabled {
 .doc-summary h2 a:hover {
   background: #f5f5f5;
 }
+.doc-summary h2 small {
+  color: gray;
+}
 .doc-summary .desc {
   color: gray;
   font-weight: normal;
